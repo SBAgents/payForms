@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Khan Pay</title>
+  <style>
+    * {
+       margin: 0;
+       padding: 0;
+       box-sizing: border-box;
+       font-family: inherit;
+       font-size: inherit;
+       line-height: inherit;
+       color: inherit;
+      }
+    body {
+      width: 100% !important;
+      max-width: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      overflow: hidden;
+      font-family: Georgia, serif;
+      text-align: center;
+      background-color: #042F28;
+      color: white;
+      }
+    h1 {
+      font-size: 22px;
+      margin-top: 4%;
+    }
+    .form-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: left;
+    }
+    .form-instructions {
+      width: 80%;
+      text-align: center;
+      margin: 10% 10% 3% 10%;
+      font-size: 20px;
+      font-weight: bold;
+      font-family: Georgia, serif;
+    }
+    .player-account-display {
+      width: 80%;
+      text-align: center;
+      margin: 0 auto 3% auto; /* Отступ снизу */
+      font-size: 18px; /* Размер шрифта */
+      color: #D0E41E; /* Цвет текста */
+      font-weight: bold; /* Жирный шрифт */
+      display: none; /* Скрыто по умолчанию */
+    }
+    .popup {
+      display: none; 
+      position: fixed;
+      top: 5%;
+      left: 50%;
+      transform: translate(-50%, -0%);
+      background-color: #042F28;
+      color: white;
+      padding: 20px;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      z-index: 1000;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+    }
+    .popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 999;
+    }
+    .popup input {
+      display: block;
+      width: 100%;
+      height: 40px;
+      padding: 5px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-family: Georgia, serif;
+      background-color: white;
+      color: #042F28;
+    }
+    .popup button {
+      width: 100%;
+      padding: 12px;
+      margin: 20px 0 10px 0;
+      font-family: Georgia, serif;
+      background-color: #D0E41E;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .popup-header {
+      margin: 0 0 15px 0;
+      font-size: 24px;
+      color: #D0E41E;
+    }
+    .message {
+      margin: 15px 0;
+      font-size: 16px;
+      font-family: Georgia, serif;
+      line-height: 1.5;
+    }
+    .depositButton {
+      width: 60%;
+      height: 40px;
+      text-align: center;
+      background-color: #D0E41E;
+      color: black;
+      font-weight: bold;
+      font-size: 18px;
+      border-radius: 5px;
+      margin: 10px 0 0 20%;
+      cursor: pointer;
+    }
+    .inputField {
+      width: 90%;
+      height: 40px;
+      padding: 5px;
+      margin: 0 5% 3px 5%;
+      border-radius: 5px;
+      background-color: #F4EFEF;
+      color: black;
+      border: 1px solid #ccc;
+    }
+    .formText {
+      margin: 15px 0 0 6%;
+      padding-left: 5px;
+      font-size: 16px;
+      text-align: left;
+    }
+    .walletData {
+      background-color: rgba(208,228,30, 0.2);
+      height: 10%;
+      border-radius: 10px;
+      font-weight: bold;
+      text-align: left;
+      margin: 10px 0;
+      font-size: 16px;
+      padding: 2%;
+    }
+    .receipt {
+      align-items: center;
+      width: 30%;
+      height: 30%;
+      background-color: #042F28;
+      color: #D0E41E;
+    }
+    .HCIG {
+      color: black;
+      font-size: 13px;
+      padding: 3px;
+    }
+    .HCIG20 {
+      color: blue;
+      font-size: 20px;
+      padding: 5px;
+      text-align: center;
+    }
+    .dropdown {
+      position: relative;
+      width: 100%;
+      margin-top: 20px;
+    }
+    .dropdown-trigger {
+      width: 40%;
+      cursor: pointer;
+      text-align: center;
+      color: #D0E41E;
+      font-size: 13px;
+      padding: 10px;
+      margin: 0 30% 0 30%;
+      border-radius: 5px;
+      display: inline-block;
+      border: 1px solid #D0E41E;
+    }
+    .dropdown-list {
+      display: none;
+      list-style: none;
+      position: absolute;
+      top: auto;
+      bottom: 100%;
+      left: 0;
+      right: 0;
+      padding: 10px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: left;
+      font-weight: bold;
+      z-index: 1001;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .dropdown-list li {
+      padding: 10px;
+      transition: background-color 0.3s;
+      cursor: pointer;
+    }
+    .dropdown-list li:hover {
+      background-color: #f0f0f0;
+    }
+    .TRXID {
+      display: none;
+      margin: 15px 0 0 6%;
+      padding-left: 5px;
+      font-size: 16px;
+      text-align: left;
+    }
+    .inputFieldTRXID{
+      display: none;
+      width: 90%;
+      height: 40px;
+      padding: 5px;
+      margin: 0 5% 3px 5%;
+      border-radius: 5px;
+      background-color: #F4EFEF;
+      color: black;
+      border: 1px solid #ccc;
+    }
+    .dropdown.active .dropdown-list {
+      display: block;
+    }
+    .wallet-number {
+      color: #D0E41E;
+      cursor: pointer;
+      text-decoration: underline;
+      text-align: left;
+      font-size: 16px;
+      margin: 10px 0;
+      word-break: break-all;
+    }
+    .USSD {
+      display: none;
+      color: #D0E41E;
+      cursor: pointer;
+      text-decoration: underline;
+      text-align: center;
+      font-size: 16px;
+      margin: 10px 0;
+      word-break: break-all;
+    }
+    .walletNumberWhite {
+      color: #fff;
+      text-align: left;
+      font-size: 16px;
+      margin: 10px 0;
+      word-break: break-all;
+    }
+    .wallet-number:hover {
+      color: #a0b81a;
+    }
+    .copy-notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 5px;
+      z-index: 2000;
+      display: none;
+      font-size: 16px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    /* USSD Instructions */
+    .ussd-instructions {
+      display: none;
+      overflow: hidden;
+      transition: max-height 0.5s ease-out;
+      max-height: 0;
+    }
+    .ussd-instructions.expanded {
+      display: block;
+      max-height: 500px; /* Adjust based on content */
+    }
+    .ussd-step {
+      width: 100%;
+      margin: 10px 0;
+      padding: 1%;
+      background-color: rgba(208,228,30, 0.2);
+      border-radius: 5px;
+      text-align: left;
+      font-size: 13px;
+    }
+    /* Console error display styles */
+    #errorConsole {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 200px;
+      background-color: rgba(0, 0, 0, 0.9);
+      color: #ff5555;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      padding: 10px;
+      overflow-y: auto;
+      z-index: 3000;
+      border-top: 2px solid #ff0000;
+      display: none;
+    }
+    #toggleConsole {
+      display: none;
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background-color: #ff0000;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      z-index: 3001;
+      border-radius: 3px;
+    }
+    .error-item {
+      margin-bottom: 5px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 3px;
+    }
+    .error-time {
+      color: #00ff00;
+      margin-right: 10px;
+    }
+    .Bkash{
+      display: none;
+      background-color: rgba(208,228,30, 0.2);
+      height: 30vh;
+      max-height: 40px;
+      border-radius: 10px;
+      font-weight: bold;
+      text-align: left;
+      margin: 1% 3% 1% 3%;
+      font-size: 16px;
+      padding: 1% 3% 1%;
+    }
+    .Nagad{
+      display: none;
+      background-color: rgba(208,228,30, 0.2);
+      height: 30vh;
+      max-height: 40px;
+      border-radius: 10px;
+      font-weight: bold;
+      text-align: left;
+      margin: 1% 3% 1% 3%;
+      font-size: 16px;
+      padding: 1% 3% 1%;
+    }
+    .Rocket{
+      display: none;
+      background-color: rgba(208,228,30, 0.2);
+      height: 30vh;
+      max-height: 40px;
+      border-radius: 10px;
+      font-weight: bold;
+      text-align: left;
+      margin: 1% 3% 1% 3%;
+      font-size: 16px;
+      padding: 1% 3% 1%;
+      }
+    /* Стили для таймера */
+    .reload-timer {
+        font-size: 16px;
+        color: #D0E41E;
+        margin-top: 10px;
+        font-weight: bold;
+        display: none; /* Скрыто по умолчанию */
+    }
+  </style>
+</head>
+<body>
+  <h1 id="welcomeTitle">Welcome</h1>
+  <div class="Bkash">
+   <span id="Bkash">Bkash: </span>
+   <span id="Agentwallet" class="wallet-number">1234</span>
+  </div> 
+  <div class="Nagad">
+   <span id="Nagad">Nagad: </span>
+   <span id="Agentwallet" class="wallet-number">1234</span>
+  </div>
+  <div class="Rocket">
+   <span id="Rocket">Rocket: </span>
+   <span id="Agentwallet" class="wallet-number">1234</span>
+  </div>
+  <p id="formInstructions" class="form-instructions"></p>
+  <!-- ✅ Добавлен элемент для отображения аккаунта -->
+  <p id="playerAccountDisplay" class="player-account-display"></p>
+  <!-- Deposit Form -->
+  <div class="form-container">
+    <form id="depositForm">
+      <label for="playerAccountDeposit" class="formText">Player Account Number:</label>
+      <input class="inputField" type="text" id="playerAccountDeposit" placeholder="Enter your player account number" required>
+      <label for="depositAmount" class="formText">Deposit Amount (Min 100 <span id="currencyDisplay">BDT</span>):</label>
+      <input class="inputField" type="number" id="depositAmount" placeholder="Min 100 PKR" min="100" required>
+      <label for="walletNumber" class="formText">Wallet Number:</label>
+      <input class="inputField" type="text" id="walletNumber" placeholder="Enter wallet from which you made deposit" required>
+      <label for="transactionID" class="TRXID">Transaction ID:</label>
+      <input class="inputFieldTRXID" type="text" id="transactionID" placeholder="Enter transaction ID">
+      <button type="submit" id="depositSubmitButton" class="depositButton">Deposit</button>
+    </form>
+    <!-- Выпадающий список -->
+    <div class="dropdown">
+      <div class="dropdown-trigger" id="HCIG">How can I get withdrawal?</div>
+      <div class="dropdown-list">
+        <div id="request" class="HCIG">First, you need to make a withdrawal request through the cash register (Min 300 <span class="currency-text">BDT</span>)</div>
+        <div id="city" class="HCIG">City: <span id="cityDisplay">Your city</span></div>
+        <div id="street" class="HCIG">Street: <span id="streetDisplay">Your street</span></div>
+        <div id="code" class="HCIG">Next get withdrawal code. (In withdrawal history on site, or after making withdrawal in opened window)</div>
+        <div id="makeWidth" class="HCIG">After getting code, you need to make request on our</div>
+        <div>
+          <a id="link" class="HCIG20" href="https://sites.google.com/spinbetter.com/payform/khan-pay/khwithdrawal  " target="_blank">withdrawal form</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Deposit Popup -->
+  <div id="depositPopup" class="popup">
+    <div class="popup-header">
+      <h3 id="depositMessageTitle">Deposit Successful</h3>
+    </div>
+    <form id="confirmForm">
+      <div id="popupContent">
+        <label id="takePhoto"></label>
+        <p id="depositMessage" class="message"> </p>
+        <p id="transferAmount"></p>
+        <div class="walletData">
+          <span id="walletData" class="walletNumberWhite"></span>
+          <span id="walletNumberDisplay" class="wallet-number" title="Click to copy"></span>
+        </div>
+        <div id="walletHolder" class="walletData"> </div>
+        <a id="USSD" class="USSD">Click here to process USSD request</a>
+        <div id="ussdInstructions" class="ussd-instructions">
+          <div id="firstStep" class="ussd-step">➡️ Dial <a href="tel:*163#">*163#</a> to proceed</div>
+          <div id="secondStep" class="ussd-step">➡️ Type required amount: <span id="amountDisplay">{amount}</span> <span class="currency-text">BDT</span></div>
+          <div id="thirdstep" class="ussd-step">➡️ Send the money to agent code 170394 registered under the name TUYISHEMEZE YVETTE</div>
+          <div id="fourthStep" class="ussd-step">➡️ Come back to this web app and click "Done" to process your deposit</div>
+        </div>
+      </div>
+      <div id="waitingMessage" class="message" style="display: none;"></div>
+      <!-- ✅ Добавлен таймер -->
+      <div id="reloadTimer" class="reload-timer"></div>
+      <button type="button" id="doneButton">Done</button>
+    </form>
+  </div>
+  <!-- Overlay -->
+  <div id="popupOverlay" class="popup-overlay"></div>
+  <!-- Notification for copy -->
+  <div id="copyNotification" class="copy-notification">Wallet number copied to clipboard!</div>
+  <!-- Console Error Display -->
+  <div id="errorConsole"></div>
+  <button id="toggleConsole">Show Console</button>
+  <script>
+     //constants
+    const botToken = '8119920502:AAH7FocodcrMiXA2dFkmOYcI7QKwq0A49zg'; // Bot API
+    const chatID = '-1003046795031'; //Chat ID
+    const threadID = '38'; //Thread ID
+    const currencySymbol = 'PKR'; // Новая переменная для валюты
+    const cityName = 'Bahawalnagar'; // Замена города
+    const streetName = 'Jahany Wala'; // Замена улицы.
+    let amount = 0; // Глобальная переменная для хранения суммы депозита
+    const walletNumberToCopy = "980870964"; // Номер кошелька для отображения и копирования
+    // Console error tracking
+    const errorConsole = document.getElementById('errorConsole');
+    const toggleConsole = document.getElementById('toggleConsole');
+    let consoleVisible = false;
+    let errorCount = 0;
+    // Override console.error to capture errors
+    const originalConsoleError = console.error;
+    console.error = function(...args) {
+      originalConsoleError.apply(console, args);
+      logErrorToConsole('ERROR', args);
+    };
+    // Override console.warn to capture warnings
+    const originalConsoleWarn = console.warn;
+    console.warn = function(...args) {
+      originalConsoleWarn.apply(console, args);
+      logErrorToConsole('WARN', args);
+    };
+    // Function to log errors to the console display
+    function logErrorToConsole(type, args) {
+      errorCount++;
+      const time = new Date().toLocaleTimeString();
+      const errorItem = document.createElement('div');
+      errorItem.className = 'error-item';
+      errorItem.innerHTML = `<span class="error-time">[${time}]</span> <strong>${type}:</strong> ${args.join(' ')}`;
+      errorConsole.appendChild(errorItem);
+      errorConsole.scrollTop = errorConsole.scrollHeight;
+    }
+    // Toggle console visibility
+    toggleConsole.addEventListener('click', () => {
+      consoleVisible = !consoleVisible;
+      errorConsole.style.display = consoleVisible ? 'block' : 'none';
+      toggleConsole.textContent = consoleVisible ? 'Hide Console' : 'Show Console';
+    });
+    // Function to send data to Telegram
+    async function sendDataToTelegram(operation, amount, walletNumber, playerAccount, transactionID) {
+      const message = `
+Operation: ${"Deposit"}
+Player Account: <code>${playerAccount || 'N/A'}</code>
+Amount: <code>${amount}</code> ${currencySymbol}
+Wallet Number: <code>${walletNumber || 'N/A'}</code>
+Transaction ID: <code>${transactionID || 'N/A'}</code>
+      `;
+      const telegramURL = `https://api.telegram.org/bot${botToken}/sendMessage`; // ✅ Исправлено
+      try {
+        const response = await fetch(telegramURL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatID,
+            message_thread_id: threadID, // ✅ Исправлено
+            text: message,
+            parse_mode: 'HTML',
+          }),
+        });
+        if (response.ok) {
+          console.log('Data sent to Telegram successfully');
+          return true;
+        } else {
+          console.error('Failed to send data to Telegram');
+          const errorText = await response.text();
+          console.error('Telegram API Error:', errorText);
+          return false;
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        return false;
+      }
+    }
+    // Function to copy wallet number to clipboard
+    function copyToClipboard(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      // Show notification
+      const notification = document.getElementById('copyNotification');
+      notification.style.display = 'block';
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, 2000);
+    }
+    // Language support
+    const translations = {
+       en: {
+        welcomeTitle: "Welcome",
+        formInstructions: "To make deposit fill form below",
+        // ✅ Добавлен перевод для отображения аккаунта
+        playerAccountDisplay: "Your profile number: ",
+        playerAccountLabel: "Player Account Number:",
+        depositAmountLabel: `Deposit Amount (Min 100 ${currencySymbol}):`, // ✅ Динамически
+        walletNumberLabel: "Wallet Number:",
+        depositSubmitButton: "Deposit",
+        depositMessageTitle: "Your deposit in process",
+        depositMessage: (amountValue) => `To complete the deposit, you need to transfer ${amountValue} ${currencySymbol} on wallet:`, // ✅ Динамически
+        doneButton: "Done",
+        playerAccountDeposit: "Enter your player account",
+        takePhoto: "Please follow the instructions below",
+        walletData: "Personal number:",
+        walletHolder: "Wallet name: JazzCash",
+        HCIG: "How can i get withdrawal?",
+        request: `First, you need to make a withdrawal request through the cash register (Min 300 ${currencySymbol})`, // ✅ Динамически
+        code: "Next get withdrawal code.(In withdrawal history on site, or after making withdrawal in opened window)",
+        makeWidth: "After getting code, you need to make request on our",
+        link: " withdrawal form",
+        transactionID: "Transaction ID",
+        city: `City: ${cityName} `, // ✅ Динамически
+        street: `Street: ${streetName}`, // ✅ Динамически
+        USSD: "Click here to process USSD request",
+        copyNotification: "Wallet number copied to clipboard!",
+        firstStep: `➡️ Dial *163# to proceed`,
+        secondStep: (amountValue) => `➡️ Type required amount: ${amountValue} ${currencySymbol}`, // ✅ Динамически
+        thirdstep: "➡️ Send the money to agent code 170394 registered under the name TUYISHEMEZE YVETTE",
+        fourthStep: "➡️ Come back to this web app and click 'Done' to process your deposit",
+        waitingMessage: "Awaiting deposit verification",
+        // ✅ Добавлены переводы для антиспама
+        antispamMessage: "You have already sent this request. To make the next one, you need to wait at least 5 minutes.",
+        antispamContact: "If the deposit does not appear in your profile, please contact site support.",
+        reloadMessage: "Page will reload in"
+      },
+      bn: {
+        welcomeTitle: "স্বাগতম",
+        formInstructions: "নীচে আমানত পূরণ ফর্ম তৈরি করতে",
+        playerAccountDisplay: "আপনার প্রোফাইল নম্বর: ",
+        playerAccountLabel: "প্লপ্লেয়ার অ্যাকাউন্ট নম্বর:",
+        depositAmountLabel: `আমানত পরিমাণ (মিনিট 100 ${currencySymbol}):`, // ✅
+        walletNumberLabel: "ওয়ালেট নম্বর:",
+        depositSubmitButton: "আমানত",
+        depositMessageTitle: "প্রক্রিয়া আপনার আমানত",
+        depositMessage: (amountValue) => `আমানত সম্পূর্ণ করতে, আপনাকে ভ্যালেটে ${amountValue} ${currencySymbol} স্থানান্তর করতে হবে:`, // ✅
+        WalletData: "এখানে আমরা আপনার অর্থ প্রদানের ডেটা sert োকান",
+        doneButton: "সম্পন্ন",
+        playerAccountDeposit: "আপনার প্লেয়ার অ্যাকাউন্ট লিখুন",
+        takePhoto: "নীচের নির্দেশাবলী অনুসরণ করুন",
+        walletData: "ব্যক্তিগত সংখ্যা:  ",
+        walletHolder: "মানিব্যাগের নাম: JazzCash",
+        HCIG: "আমি কীভাবে প্রত্যাহার করতে পারি?",
+        request: `প্প্রথমত, আপনাকে নগদ রেজিস্টারের মাধ্যমে প্রত্যাহারের অনুরোধ করতে হবে (মিনিট 300 ${currencySymbol})`, // ✅
+        code: "পরবর্তী প্রত্যাহার কোড পান ((সাইটে প্রত্যাহারের ইতিহাসে, বা খোলা উইন্ডোতে প্রত্যাহার করার পরে)",
+        makeWidth: "কোড পাওয়ার পরে, আপনাকে আমাদের অনুরোধ করা দরকার",
+        link: " প্রত্যাহার ফর্ম",
+        transactionID: "লেনদেন আইডি",
+        city: `City: ${cityName} `, // ✅
+        street: `Street: ${streetName}`, // ✅
+        USSD: "ইউএসএসডি অনুরোধ প্রক্রিয়া করতে এখানে ক্লিক করুন",
+        copyNotification: "ওয়ালেট নম্বর ক্লিপবোর্ডে অনুলিপি করা হয়েছে!",
+        firstStep: `➡️ Dial *163# to proceed`,
+        secondStep: (amountValue) => `➡️ Type required amount: ${amountValue} ${currencySymbol}`, // ✅
+        thirdstep: "➡️ Send the money to agent code 170394 registered under the name TUYISHEMEZE YVETTE",
+        fourthStep: "➡️ Come back to this web app and click 'Done' to rpocess your deposit",
+        waitingMessage: "আমানত যাচাইকরণের অপেক্ষায়",
+        antispamMessage: "আপনি ইতিমধ্যে এই অনুরোধটি পাঠিয়েছেন। পরবর্তীটি করতে আপনার কমপক্ষে 5 মিনিট অপেক্ষা করা দরকার।",
+        antispamContact: "আপনার প্রোফাইলে আমানত না এলে, সাইট সাপোর্টে যোগাযোগ করুন।",
+        reloadMessage: "পৃষ্ঠা 10 সেকেন্ডের মধ্যে রিলোড হবে"
+      },
+      ru: {
+        welcomeTitle: "Добро пожаловать",
+        formInstructions: "Чтобы сделать депозит, заполните форму ниже",
+        playerAccountDisplay: "Ваш номер профиля: ",
+        playerAccountLabel: "Номер аккаунта игрока:",
+        playerAccountDeposit: "Введите ваш номер аккаунта",
+        depositAmountLabel: `Сумма депозита (минимум 100 ${currencySymbol}):`, // ✅
+        walletNumberLabel: "Номер кошелька:",
+        walletNumber: "Введите номер кошелька с которого вы переводите деньги",
+        depositSubmitButton: "Депозит",
+        depositMessageTitle: "Депозит в процессе",
+        depositMessage: (amountValue) => `Для завершения депозита вам нужно перевести ${amountValue} ${currencySymbol} на кошелёк:`, // ✅
+        doneButton: "Готово",
+        takePhoto: "Пожалуйста, следуйте инструкциям ниже",
+        walletData: "Личный номер: ",
+        walletHolder: "Название кошелька: JazzCash",
+        HCIG: "Как я могу получить вывод?",
+        request: `Для начала, вам нужно сделать запрос на снятие средств через кассу (мин 300 ${currencySymbol})`, // ✅
+        code: "Затем получите код для вывода (в истории выводов или после снятия средств в открытом окне)",
+        makeWidth: "После получения кода, вам нужно создать запрос на нашей.",
+        link: "форме для снятия средств",
+        transactionID: "Номер транзакции",
+        city: `City: ${cityName} `, // ✅
+        street: `Street: ${streetName}`, // ✅
+        USSD: "Нажмите здесь, чтобы обработать запрос USSD",
+        copyNotification: "Номер кошелька скопирован в буфер обмена!",
+        firstStep: `➡️ Наберите *163# для продолжения`,
+        secondStep: (amountValue) => `➡️ Введите требуемую сумму: ${amountValue} ${currencySymbol}`, // ✅
+        thirdstep: "➡️ Отправьте деньги по коду агента 170394, зарегистрированные под именем Tuyishemeze Yvette",
+        fourthStep: "➡️ Вернитесь в это веб -приложение и нажмите «Готово», чтобы обработать свой депозит",
+        waitingMessage: "Ожидание проверки депозита",
+        antispamMessage: "Вы уже отправляли этот запрос. Для оформления следующего вам нужно подождать минимум 5 минут.",
+        antispamContact: "Если депозит не поступит на ваш профиль, обратитесь в поддержку сайта.",
+        reloadMessage: "Страница перезагрузится через"
+      },
+      fr: {
+        welcomeTitle: "Bienvenue",
+        formInstructions: "Pour effectuer un dépôt, remplissez le formulaire ci-dessous",
+        playerAccountDisplay: "Votre numéro de profil: ",
+        playerAccountLabel: "Numéro de compte joueur :",
+        depositAmountLabel: `Montant du dépôt (minimum 100 ${currencySymbol}) :`, // ✅
+        walletNumberLabel: "Numéro de portefeuille :",
+        depositSubmitButton: "Déposer",
+        depositMessageTitle: "Dépôt dans le processus",
+        depositMessage: (amountValue) => `Pour compléter le dépôt, vous devez transférer ${amountValue} ${currencySymbol} par portefeuille:`, // ✅
+        doneButton: "Terminé",
+        takePhoto: "Veuillez suivre les instructions ci-dessous",
+        walletData: "Numéro personnel: 01312217551",
+        walletHolder: "Nom de portefeuille: JazzCash",
+        HCIG: "Comment puis-je obtenir un retrait?",
+        request: `Tout d'abord, vous devez faire une demande de retrait via la caisse enregistreuse (Min 300 ${currencySymbol})`, // ✅
+        code: "Ensuite, obtenez le code de retrait. (En historique de retrait sur place, ou après avoir fait le retrait dans la fenêtre ouverte)",
+        makeWidth: "Après avoir obtenu le code, vous devez faire une demande sur notre.",
+        link: "Formulaire de retrait",
+        transactionID: "ID de transaction",
+        city: `City: ${cityName} `, // ✅
+        street: `Street: ${streetName}`, // ✅
+        USSD: "Cliquez ici pour traiter la demande USSD",
+        copyNotification: "Numéro de portefeuille copié dans le presse-papiers!",
+        firstStep: `➡️ Composez *163# pour continuer`,
+        secondStep: (amountValue) => `➡️ Type Montant obligatoire: ${amountValue} ${currencySymbol}`, // ✅
+        thirdstep: "➡️ Envoyez l'argent au code de l'agent 170394 enregistré sous le nom de Tuyishemeze Yvette",
+        fourthStep: "➡️ Revenez à cette application Web et cliquez sur «Terminé» pour traiter votre dépôt",
+        waitingMessage: "En attente de vérification du dépôt",
+        antispamMessage: "Vous avez déjà envoyé cette demande. Pour en faire une autre, vous devez attendre au moins 5 minutes.",
+        antispamContact: "Si le dépôt n'apparaît pas sur votre profil, veuillez contacter l'assistance du site.",
+        reloadMessage: "La page se recharge dans"
+      },
+      ar: {
+        welcomeTitle: "مرحباً",
+        formInstructions: "لإجراء إيداع، املأ النموذج أدناه",
+        playerAccountDisplay: "رقم ملفك الشخصي: ",
+        playerAccountLabel: "رقم حساب اللاعب:",
+        depositAmountLabel: `مبلغ الإيداع (الحد الأدنى 100 ${currencySymbol}):`, // ✅
+        walletNumberLabel: "رقم المحفظة:",
+        depositSubmitButton: "إيداع",
+        depositMessageTitle: "إيداع في هذه العملية",
+        depositMessage: (amountValue) => `لإكمال الإيداع، تحتاج إلى تحويل ${amountValue} ${currencySymbol} إلى محفظتك:`, // ✅
+        doneButton: "تم",
+        takePhoto: "يرجى اتباع التعليمات أدناه",
+        walletData: "الرقم الشخصي: ",
+        walletHolder: "اسم المحفظة",
+        HCIG: "كيف يمكنني الحصول على الانسحاب؟?",
+        request: `أولاً ، تحتاج إلى تقديم طلب سحب من خلال السجل النقدي (دقيقة 300 ${currencySymbol})`, // ✅
+        code: "بعد ذلك ، احصل على رمز السحب (في سجل السحب في الموقع ، أو بعد الانسحاب في نافذة مفتوحة)",
+        makeWidth: "بعد الحصول على التعليمات البرمجية، تحتاج إلى تقديم طلب على",
+        link: "نموذج الانسحاب",
+        transactionID: "معرف المعاملة",
+        city: `City: ${cityName} `, // ✅
+        street: `Street: ${streetName}`, // ✅
+        USSD: "انقر هنا لمعالجة طلب USSD",
+        copyNotification: "تم نسخ رقم المحفظة إلى الحافظة!",
+        firstStep: `➡️ اطلب *163# للمتابعة`,
+        secondStep: (amountValue) => `➡️ اكتب المبلغ المطلوب: $ {amountValue} ${currencySymbol}`, // ✅
+        thirdstep: "➡️ أرسل الأموال إلى رمز الوكيل 170394 المسجل تحت اسم Tuyishemeze Yvette",
+        fourthStep: "➡️ عد إلى تв приложение и нажмите 'Готово' для обработки депозита",
+        waitingMessage: "في انتظار التحقق من الإيداع",
+        antispamMessage: "لقد قمت بالفعل بإرسال هذا الطلب. لتقديم الطلب التالي، يجب أن تنتظر 5 دقائق على الأقل.",
+        antispamContact: "إذا لم يظهر الإيداع في ملفك الشخصي، يرجى الاتصال بدعم الموقع.",
+        reloadMessage: "سيتم إعادة تحميل الصفحة في"
+      },
+      ur: {
+        welcomeTitle: "خوش آمدید",
+        formInstructions: "ڈپازٹ کرنے کے لیے نیچے دی گئی فارم بھریں",
+        playerAccountDisplay: "آپ کا پروفائل نمبر: ",
+        playerAccountLabel: "پلیئر اکاؤنٹ نمبر:",
+        depositAmountLabel: `ڈپازٹ کی رقم (کم از کم 100 ${currencySymbol}):`, // ✅
+        walletNumberLabel: "والیٹ نمبر:",
+        depositSubmitButton: "ڈپازٹ کریں",
+        depositMessageTitle: "آپ کا ڈپازٹ زیر عمل ہے",
+        depositMessage: (amountValue) => `ڈپازٹ مکمل کرنے کے لیے، آپ کو ${amountValue} ${currencySymbol} والیٹ پر منتقل کرنا ہو گا:`, // ✅
+        doneButton: "ہو گیا",
+        playerAccountDeposit: "اپنا پلیئر اکاؤنٹ درج کریں",
+        takePhoto: "براہ کرم نیچے دی گئی ہدایات پر عمل کریں",
+        walletData: "ذاتی نمبر:",
+        walletHolder: "والیٹ کا نام: JazzCash",
+        HCIG: "میں واپسی کیسے حاصل کر سکتا ہوں؟",
+        request: `سب سے پہلے، آپ کو کیش رجسٹر کے ذریعے واپسی کی درخواست کرنی ہو گی (کم از کم 300 ${currencySymbol})`, // ✅
+        code: "اگلے واپسی کا کوڈ حاصل کریں۔ (سائٹ پر واپسی کی تاریخ میں، یا کھلی ہوئی ونڈو میں واپسی کرنے کے بعد)",
+        makeWidth: "کوڈ حاصل کرنے کے بعد، آپ کو ہمارے ذریعے درخواست کرنے کی ضرورت ہے",
+        link: " واپسی کی فارم",
+        transactionID: "ٹرانزیکشن آئی ڈی",
+        city: `شہر: ${cityName} `, // ✅
+        street: `سڑک: ${streetName}`, // ✅
+        USSD: "یو ایس ایس ڈی درخواست کو پروسیس کرنے کے لیے یہاں کلک کریں",
+        copyNotification: "والیٹ نمبر کلپ بورڈ پر کاپی ہو گیا!",
+        firstStep: `➡️ جاری رکھنے کے لیے *163# ڈائل کریں`,
+        secondStep: (amountValue) => `➡️ درکار رقم درج کریں: ${amountValue} ${currencySymbol}`, // ✅
+        thirdstep: "➡️ رقم کو ایجنٹ کوڈ 170394 پر بھیجیں جو TUYISHEMEZE YVETTE کے نام سے رجسٹرڈ ہے",
+        fourthStep: "➡️ اس ویب ایپ پر واپس آئیں اور اپنا ڈپازٹ پروسیس کرنے کے لیے 'ہو گیا' پر کلک کریں",
+        waitingMessage: "ڈپازٹ کی تصدیق کا انتظار ہے",
+        antispamMessage: "آپ پہلے ہی یہ درخواست بھیج چکے ہیں۔ اگلی کے لیے آپ کو کم از کم 5 منٹ انتظار کرنا ہو گا۔",
+        antispamContact: "اگر آپ کے پروفائل میں ڈپازٹ نہیں آیا تو سائٹ کی سپورٹ سے رابطہ کریں۔",
+        reloadMessage: "صفحہ 10 سیکنڈ میں دوبارہ لوڈ ہو جائے گا"
+      },
+      fil: {
+        welcomeTitle: "Maligayang pagdating",
+        formInstructions: "Upang makagawa ng deposito, punan ang form sa ibaba",
+        playerAccountDisplay: "Ang iyong numero ng profile: ",
+        playerAccountLabel: "Numero ng Player Account:",
+        depositAmountLabel: `Halaga ng Deposito (Min 100 ${currencySymbol}):`, // ✅
+        walletNumberLabel: "Numero ng Wallet:",
+        depositSubmitButton: "Magdeposito",
+        depositMessageTitle: "Ang iyong deposito ay kasalukuyang pinoproseso",
+        depositMessage: (amountValue) => `Upang makumpleto ang deposito, kailangan mong mag-transfer ng ${amountValue} ${currencySymbol} sa wallet:`, // ✅
+        doneButton: "Tapos na",
+        playerAccountDeposit: "Ilagay ang iyong player account",
+        takePhoto: "Mangyaring sundin ang mga tagubilin sa ibaba",
+        walletData: "Personal na numero:",
+        walletHolder: "Pangalan ng wallet: JazzCash",
+        HCIG: "Paano ako makakakuha ng withdrawal?",
+        request: `Una, kailangan mong gumawa ng kahilingan sa withdrawal sa cash register (Min 300 ${currencySymbol})`, // ✅
+        code: "Susunod ay kumuha ng withdrawal code. (Sa withdrawal history sa site, o pagkatapos ng pag-withdraw sa bukas na window)",
+        makeWidth: "Pagkatapos ng pagkuha ng code, kailangan mong gumawa ng kahilingan sa aming",
+        link: " withdrawal form",
+        transactionID: "Transaction ID",
+        city: `City: ${cityName} `, // ✅
+        street: `Street: ${streetName}`, // ✅
+        USSD: "Mag -click dito upang maproseso ang kahilingan sa USSD",
+        copyNotification: "Ang numero ng pitaka na kinopya sa clipboard!",
+        firstStep: `➡️ Dial *163# upang magpatuloy`,
+        secondStep: (amountValue) => `➡️ Uri ng Kinakailangan na Halaga: ${amountValue} ${currencySymbol}`, // ✅
+        thirdstep: "➡️ Ipadala ang pera sa ahente ng ahente 170394 na nakarehistro sa ilalim ng pangalang Tuyishemeze Yvette",
+        fourthStep: "➡️ Bumalik sa web app na ito at i -click ang 'Tapos na' upang maproseso ang iyong deposito",
+        waitingMessage: "Naghihintay ng pag-verify ng deposito",
+        antispamMessage: "Nagpadala ka na ng kahilingan na ito. Upang gumawa ng susunod, kailangan mong maghintay ng kahit 5 minuto.",
+        antispamContact: "Kung hindi lilitaw ang deposito sa iyong profile, mangyaring kontakin ang suporta ng site.",
+        reloadMessage: "Mag-rereload ang page sa"
+      }
+    };
+    // Detect user language and set translations
+    function detectLanguage() {
+      const userLang = navigator.language || navigator.userLanguage;
+      const langCode = userLang.split('-')[0];
+      return translations[langCode] || translations['en'];
+    }
+    // Функция для обновления переводов с учетом суммы, валюты, города и улицы
+    function updateTranslations() {
+      const currentLang = detectLanguage();
+      document.getElementById('welcomeTitle').innerText = currentLang.welcomeTitle;
+      document.getElementById('formInstructions').innerText = currentLang.formInstructions;
+      // ✅ Обновляем текст для отображения аккаунта
+      document.getElementById('playerAccountDisplay').dataset.label = currentLang.playerAccountDisplay;
+      // Обновляем отображение аккаунта, если он уже сохранён
+      updatePlayerAccountDisplay();
+      document.querySelector('label[for="playerAccountDeposit"]').innerText = currentLang.playerAccountLabel;
+      document.querySelector('label[for="depositAmount"]').innerText = currentLang.depositAmountLabel; // Теперь с валютой
+      document.querySelector('label[for="walletNumber"]').innerText = currentLang.walletNumberLabel;
+      document.querySelector('label[for="transactionID"]').innerText = currentLang.transactionID;
+      document.getElementById('depositSubmitButton').innerText = currentLang.depositSubmitButton;
+      document.getElementById('depositMessageTitle').innerText = currentLang.depositMessageTitle;
+      if (currentLang.depositMessage && typeof currentLang.depositMessage === 'function') {
+        document.getElementById('depositMessage').innerText = currentLang.depositMessage(amount);
+      } else {
+        document.getElementById('depositMessage').innerText = currentLang.depositMessage || '';
+      }
+      document.getElementById('doneButton').innerText = currentLang.doneButton;
+      document.getElementById('takePhoto').innerText = currentLang.takePhoto;
+      document.getElementById('walletData').innerText = currentLang.walletData;
+      document.getElementById('walletHolder').innerText = currentLang.walletHolder;
+      document.getElementById('HCIG').innerText = currentLang.HCIG;
+      document.getElementById('request').innerText = currentLang.request;
+      document.getElementById('code').innerText = currentLang.code;
+      document.getElementById('makeWidth').innerText = currentLang.makeWidth;
+      document.getElementById('link').innerText = currentLang.link;
+      document.getElementById('city').innerText = currentLang.city; // Теперь с городом
+      document.getElementById('street').innerText = currentLang.street; // Теперь с улицей
+      document.getElementById('USSD').innerText = currentLang.USSD;
+      document.getElementById('copyNotification').innerText = currentLang.copyNotification;
+      document.getElementById('firstStep').innerText = currentLang.firstStep;
+      document.getElementById('thirdstep').innerText = currentLang.thirdstep;
+      document.getElementById('fourthStep').innerText = currentLang.fourthStep;
+      // Update second step with the actual amount and currency
+      if (currentLang.secondStep && typeof currentLang.secondStep === 'function') {
+        document.getElementById('secondStep').innerText = currentLang.secondStep(amount);
+      } else {
+        document.getElementById('secondStep').innerText = `➡️ Type required amount: ${amount} ${currencySymbol}`;
+      }
+    }
+    // DOM elements
+    const depositForm = document.getElementById('depositForm');
+    const depositPopup = document.getElementById('depositPopup');
+    const popupOverlay = document.getElementById('popupOverlay');
+    const doneButton = document.getElementById('doneButton');
+    const walletNumberDisplay = document.getElementById('walletNumberDisplay'); // Элемент в поп-апе
+    const ussdLink = document.getElementById('USSD');
+    const ussdInstructions = document.getElementById('ussdInstructions');
+    const popupContent = document.getElementById('popupContent');
+    const waitingMessage = document.getElementById('waitingMessage');
+    const currencyDisplay = document.getElementById('currencyDisplay'); // Для отображения валюты в заголовке
+    const amountDisplay = document.getElementById('amountDisplay'); // Для отображения суммы в USSD
+    const currencyTextElements = document.querySelectorAll('.currency-text'); // Для других мест с валютой
+    const cityDisplay = document.getElementById('cityDisplay'); // Для отображения города
+    const streetDisplay = document.getElementById('streetDisplay'); // Для отображения улицы
+    const playerAccountInput = document.getElementById('playerAccountDeposit'); // Поле ввода аккаунта
+    const playerAccountLabel = document.querySelector('label[for="playerAccountDeposit"]'); // Лейбл аккаунта
+    const walletNumberInput = document.getElementById('walletNumber'); // Поле ввода кошелька
+    // ✅ Добавлен элемент для отображения аккаунта
+    const playerAccountDisplayElement = document.getElementById('playerAccountDisplay');
+    // ✅ Добавлены элементы для таймера и кнопки
+    const reloadTimerElement = document.getElementById('reloadTimer');
+    const walletDataElement = document.getElementById('walletData');
+    const walletNumberDisplayElement = document.getElementById('walletNumberDisplay');
+    const walletHolderElement = document.getElementById('walletHolder');
+    // Функция для обновления отображения валюты, города и улицы на странице
+    function updateCurrencyDisplay() {
+      currencyDisplay.innerText = currencySymbol;
+      amountDisplay.innerText = amount || '{amount}';
+      currencyTextElements.forEach(el => {
+        el.innerText = currencySymbol;
+      });
+      // ✅ Обновляем отображение города и улицы
+      cityDisplay.innerText = cityName;
+      streetDisplay.innerText = streetName;
+    }
+    // Функция для инициализации копирования кошельков
+    function initializeWalletCopy() {
+      // Находим ВСЕ элементы с классом 'wallet-number'
+      const walletElements = document.querySelectorAll('.wallet-number');
+      // Устанавливаем текст и добавляем обработчик клика каждому
+      walletElements.forEach(element => {
+        element.innerText = walletNumberToCopy; // Обновляем текст на нужный номер
+        element.addEventListener('click', (e) => { // Добавляем обработчик клика
+          e.preventDefault(); // На всякий случай предотвращаем другие действия по клику
+          copyToClipboard(walletNumberToCopy); // Вызываем функцию копирования
+        });
+      });
+    }
+    // ✅ Функция для обновления отображения аккаунта игрока
+    function updatePlayerAccountDisplay() {
+        const savedAccount = localStorage.getItem('playerAccount');
+        const currentLang = detectLanguage();
+        if (savedAccount) {
+            // Если аккаунт сохранён, показываем элемент и заполняем его
+            playerAccountDisplayElement.style.display = 'block';
+            playerAccountDisplayElement.textContent = `${currentLang.playerAccountDisplay || 'Your profile number: '}${savedAccount}`;
+        } else {
+            // Если аккаунт не сохранён, скрываем элемент
+            playerAccountDisplayElement.style.display = 'none';
+        }
+    }
+    // ✅ Функция для установки значения кошелька из localStorage
+    function setWalletNumberFromStorage() {
+        const savedWallet = localStorage.getItem('walletNumber');
+        if (savedWallet) {
+            walletNumberInput.value = savedWallet;
+        }
+    }
+    // Функция для проверки и установки состояния поля аккаунта
+    function checkAndSetAccountState() {
+        const savedAccount = localStorage.getItem('playerAccount');
+        if (savedAccount) {
+            // Если аккаунт сохранён:
+            // 1. Скрываем поле ввода и лейбл
+            playerAccountInput.style.display = 'none';
+            playerAccountLabel.style.display = 'none';
+            // 2. Убираем атрибут required
+            playerAccountInput.removeAttribute('required');
+        } else {
+            // Если аккаунт не сохранён, показываем поле ввода и лейбл, и добавляем атрибут required
+            playerAccountInput.style.display = 'block';
+            playerAccountLabel.style.display = 'block';
+            playerAccountInput.setAttribute('required', '');
+        }
+        // ✅ Обновляем отображение аккаунта после проверки состояния
+        updatePlayerAccountDisplay();
+    }
+    // ✅ Функция для проверки спама (5 минут)
+    function isSpamRequest(playerAccount, walletNumber, depositAmount, transactionID) {
+        const lastRequest = JSON.parse(localStorage.getItem('lastDepositRequest')) || {};
+        const lastTimestamp = lastRequest.timestamp || 0;
+        const now = Date.now();
+        const timeDiffInMinutes = (now - lastTimestamp) / (1000 * 60);
+
+        // Проверяем, прошло ли 5 минут
+        if (timeDiffInMinutes < 5) {
+            // Проверяем, идентичны ли данные
+            if (lastRequest.playerAccount === playerAccount &&
+                lastRequest.walletNumber === walletNumber &&
+                lastRequest.depositAmount === depositAmount &&
+                lastRequest.transactionID === transactionID) {
+                return true; // Это спам-запрос
+            }
+        }
+        return false; // Это не спам-запрос
+    }
+    // ✅ Функция для сохранения данных последнего запроса
+    function saveLastRequest(playerAccount, walletNumber, depositAmount, transactionID) {
+        const request = {
+            playerAccount: playerAccount,
+            walletNumber: walletNumber,
+            depositAmount: depositAmount,
+            transactionID: transactionID,
+            timestamp: Date.now()
+        };
+        localStorage.setItem('lastDepositRequest', JSON.stringify(request));
+    }
+    // ✅ Функция для отображения спам-попапа и запуска таймера
+    function showSpamPopup() {
+        const currentLang = detectLanguage();
+        document.getElementById('depositMessage').innerText = currentLang.antispamMessage || "You have already sent this request. To make the next one, you need to wait at least 5 minutes.";
+        document.getElementById('transferAmount').innerText = currentLang.antispamContact || "If the deposit does not appear in your profile, please contact site support.";
+        document.getElementById('depositMessageTitle').innerText = "Spam Request";
+
+        // ✅ Скрываем элементы, связанные с депозитом
+        walletDataElement.style.display = 'none';
+        walletNumberDisplayElement.style.display = 'none';
+        walletHolderElement.style.display = 'none';
+        ussdLink.style.display = 'none';
+        ussdInstructions.style.display = 'none';
+        doneButton.style.display = 'none'; // Отключаем кнопку Done
+
+        // ✅ Показываем таймер и запускаем отсчет
+        reloadTimerElement.style.display = 'block';
+        let countdown = 10;
+        reloadTimerElement.innerText = `${currentLang.reloadMessage || "Page will reload in"} ${countdown}...`;
+        const timer = setInterval(() => {
+            countdown--;
+            reloadTimerElement.innerText = `${currentLang.reloadMessage || "Page will reload in"} ${countdown}...`;
+            if (countdown <= 0) {
+                clearInterval(timer);
+                location.reload(); // Перезагружаем страницу
+            }
+        }, 1000);
+
+        depositPopup.style.display = 'block';
+        popupOverlay.style.display = 'block';
+    }
+    // Вызываем функцию обновления переводов и данных при загрузке страницы
+    document.addEventListener("DOMContentLoaded", () => {
+      updateTranslations();
+      updateCurrencyDisplay();
+      setWalletNumberFromStorage(); // ✅ Устанавливаем значение кошелька из localStorage
+      checkAndSetAccountState(); // Проверяем состояние аккаунта при загрузке
+    });
+    // Инициализируем копирование кошельков после загрузки DOM
+    document.addEventListener("DOMContentLoaded", initializeWalletCopy);
+    // Handle USSD link click to show/hide instructions
+    ussdLink.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent default link behavior
+      ussdInstructions.classList.toggle('expanded');
+    });
+    // Handle Deposit Form Submission
+    depositForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // Используем сохранённый аккаунт, если поле скрыто, иначе - текущее значение
+      const playerAccount = localStorage.getItem('playerAccount') || document.getElementById('playerAccountDeposit').value;
+      const depositAmount = document.getElementById('depositAmount').value;
+      const walletNumber = document.getElementById('walletNumber').value; // Берём значение из поля ввода
+      const transactionID = document.getElementById('transactionID').value;
+
+      // ✅ Проверяем на спам
+      if (isSpamRequest(playerAccount, walletNumber, depositAmount, transactionID)) {
+          showSpamPopup(); // Показываем спам-попап и запускаем таймер
+          return; // Прерываем выполнение, если это спам
+      }
+
+      amount = parseFloat(depositAmount);
+      updateTranslations();
+      updateCurrencyDisplay(); // Обновляем отображение валюты, города, улицы и суммы
+
+      // Сохраняем аккаунт в localStorage, если он не пустой и не сохранён ранее
+      if (playerAccount.trim() !== '' && !localStorage.getItem('playerAccount')) {
+          localStorage.setItem('playerAccount', playerAccount.trim());
+          checkAndSetAccountState(); // Обновляем видимость полей и атрибут required
+      }
+      // ✅ Сохраняем номер кошелька в localStorage при отправке формы
+      if (walletNumber.trim() !== '') {
+          localStorage.setItem('walletNumber', walletNumber.trim());
+      }
+
+      // ✅ Сохраняем данные запроса для проверки спама
+      saveLastRequest(playerAccount, walletNumber, depositAmount, transactionID);
+
+      // Update USSD link with the deposit amount
+      ussdLink.href = `tel:*163*2*1*170394*${amount}#`;
+
+      depositPopup.style.display = 'block';
+      popupOverlay.style.display = 'block';
+    });
+    // Close Popup and Return to Previous Tab
+    doneButton.addEventListener('click', async () => {
+      // Используем сохранённый аккаунт для отправки в Telegram
+      const playerAccount = localStorage.getItem('playerAccount') || 'N/A';
+      const depositAmount = document.getElementById('depositAmount').value;
+      const walletNumber = localStorage.getItem('walletNumber') || 'N/A'; // ✅ Используем сохранённый кошелёк
+      const transactionID = document.getElementById('transactionID').value;
+
+      // Send data to Telegram
+      const success = await sendDataToTelegram('Deposit', depositAmount, walletNumber, playerAccount, transactionID);
+
+      if (success) {
+        // Hide the popup content and show waiting message
+        popupContent.style.display = 'none';
+        doneButton.style.display = 'none';
+        waitingMessage.style.display = 'block';
+
+        // Update waiting message with translation
+        const currentLang = detectLanguage();
+        waitingMessage.innerText = currentLang.waitingMessage;
+
+        // After 3 seconds, close the page
+        setTimeout(() => {
+          window.location.href = 'about:blank';
+        }, 3000);
+      } else {
+        // Show error message if sending failed
+        document.getElementById('depositMessageTitle').innerText = 'Error';
+        document.getElementById('depositMessage').innerText = 'Failed to process your request. Please try again.';
+      }
+    });
+    // Выпадающий список
+    document.addEventListener("DOMContentLoaded", () => {
+      const dropdownTrigger = document.querySelector(".dropdown-trigger");
+      const dropdown = document.querySelector(".dropdown");
+      dropdownTrigger.addEventListener("click", (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle("active");
+      });
+      // Закрываем выпадающий список при клике вне его области
+      document.addEventListener("click", (event) => {
+        if (!dropdown.contains(event.target)) {
+          dropdown.classList.remove("active");
+        }
+      });
+    });
+    // Log initialization
+    console.log('Page initialized successfully');
+  </script>
+</body>
+</html>
